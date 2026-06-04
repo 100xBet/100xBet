@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: #0d0d0d;
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 14px 0;
+    background: #141317;
+    border-bottom: 1px solid #272727;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .nav-top {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .logo {
+    font-size: 17px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ee86ff, #6f5fcc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    justify-self: start;
+  }
+
+  /* BALANCE - true center */
+  .balance-wrap {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid #493367;
+    background: linear-gradient(33deg, #9144fa4f, #0000 35%), #272727;
+    transition: background 0.15s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    justify-self: center;
+  }
+  .balance-wrap:active { background: linear-gradient(33deg, #9144fa8f, #0000 35%), #333; }
+  .balance-sym { color: #b37ff9; font-size: 13px; }
+  .balance-amount { color: #b37ff9; font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
+  .balance-unit { color: #767676; font-size: 11px; }
+  .balance-edit-hint { color: #5a3a7a; font-size: 10px; margin-left: 2px; }
+
+  /* Balance modal */
+  .balance-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000000a0;
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .balance-modal.open { display: flex; }
+  .balance-modal-box {
+    background: #1c1c1f;
+    border: 1px solid #3d3d45;
+    border-radius: 14px;
+    padding: 22px 20px;
+    width: 88%;
+    max-width: 320px;
+  }
+  .balance-modal-box h3 { font-size: 14px; color: #a1a1a1; margin-bottom: 12px; font-weight: 500; }
+  .balance-modal-input {
+    width: 100%;
+    background: #0d0d0d;
+    border: 1px solid #3d3d45;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+    outline: none;
+    text-align: center;
+    margin-bottom: 14px;
+    -webkit-appearance: none;
+  }
+  .balance-modal-input:focus { border-color: #6f5fcc; }
+  .balance-modal-btns { display: flex; gap: 8px; }
+  .balance-modal-btn {
+    flex: 1; padding: 10px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; border: none;
+    cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+  }
+  .balance-modal-btn.confirm { background: #72509f; color: #fff; }
+  .balance-modal-btn.cancel { background: #272727; color: #a1a1a1; }
+
+  /* GAME TABS */
+  .game-tabs {
+    display: flex;
+    gap: 2px;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 1px;
+  }
+  .game-tabs::-webkit-scrollbar { display: none; }
+  .game-tab {
+    padding: 7px 13px;
+    border-radius: 6px 6px 0 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: #767676;
+    cursor: pointer;
+    border: none;
+    background: none;
+    white-space: nowrap;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .game-tab:active { background: #1a1a1e; }
+  .game-tab.active { color: #fff; background: linear-gradient(180deg, #0000, #5b3e828f), #1c1c1f; }
+
+  /* LAYOUT */
+  .main-layout { display: flex; flex-direction: column; }
+  .content { flex: 1; padding: 10px 12px 20px; }
+
+  /* CRASH GRAPH */
+  .crash-container {
+    background: linear-gradient(to bottom right, #1c1c1f, #1c1c1f 55%, #2f263d 75%, #2f263d);
+    border-radius: 12px;
+    border: 1px solid #272727;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .crash-graph {
+    height: 200px;
+    position: relative;
+    background: #0f0f0f;
+    overflow: hidden;
+  }
+  .crash-graph canvas { display: block; width: 100%; height: 100%; }
+  .crash-multiplier {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 56px;
+    font-weight: 700;
+    color: transparent;
+    background: linear-gradient(#dbdbdb, #757575);
+    -webkit-background-clip: text;
+    background-clip: text;
+    letter-spacing: -2px;
+    pointer-events: none;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .crash-multiplier.crashed {
+    background: linear-gradient(#fc5a5a, #dd2d2d);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  .crash-status {
+    position: absolute;
+    top: 10px; left: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+  .crash-status.live { background: #02df981f; color: #02df98; border: 1px solid #02df9840; }
+  .crash-status.crashed-badge { background: #fc5a5a1f; color: #fc5a5a; border: 1px solid #fc5a5a40; }
+  .crash-status.waiting-badge { background: #2727271f; color: #767676; border: 1px solid #27272740; }
+
+  /* BET CONTROLS */
+  .bet-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    background: #141317;
+    border-top: 1px solid #272727;
+  }
+  .bet-row { display: flex; gap: 10px; }
+  .bet-input-wrap { flex: 1; }
+  .bet-label { font-size: 10px; color: #767676; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .bet-input {
+    width: 100%;
+    background: #1c1c1f;
+    border: 1px solid #272727;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .bet-input:focus { border-color: #6f5fcc; }
+
+  .payout-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 0;
+  }
+  .payout-preview-label { font-size: 10px; color: #767676; text-transform: uppercase; letter-spacing: 0.04em; }
+  .payout-preview-val { font-size: 16px; font-weight: 700; color: #02df98; }
+
+  .btn-row { display: flex; gap: 6px; }
+  .bet-btn {
+    flex: 1;
+    padding: 13px 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.1s;
+    font-family: 'Space Grotesk', sans-serif;
+    box-shadow: 0 4px 10px #0000002a, inset 0 1px #ffffff12, inset 0 -2px #0000003d;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .bet-btn.primary { background: #11a777; color: #fff; }
+  .bet-btn.primary:active { background: #0e8d66; transform: scale(0.98); }
+  .bet-btn.cashout { background: #02df98; color: #0a1a14; }
+  .bet-btn.cashout:active { background: #00c586; transform: scale(0.98); }
+  .bet-btn.cancel-queued { background: #272727; color: #a1a1a1; }
+  .bet-btn.cancel-queued:active { background: #333; transform: scale(0.98); }
+  .bet-btn.start-round { background: #72509f; color: #fff; }
+  .bet-btn.start-round:active { background: #583f75; transform: scale(0.98); }
+  .bet-btn.half { background: #272727; color: #a1a1a1; font-size: 12px; flex: 0 0 46px; }
+  .bet-btn.half:active { background: #323238; }
+
+  /* HISTORY BADGES */
+  .history-row {
+    display: flex;
+    gap: 4px;
+    padding: 0 0 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .history-row::-webkit-scrollbar { display: none; }
+  .mult-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .mult-low  { background: #1c1c1f; color: #a1a1a1; border: 1px solid #272727; }
+  .mult-mid  { background: #11a7771f; color: #02df98; border: 1px solid #11a77740; }
+  .mult-high { background: #b27cfd1f; color: #b37ff9; border: 1px solid #b37ff940; }
+  .mult-moon { background: #ffd66b1f; color: #ffd66b; border: 1px solid #ffd66b40; }
+
+  /* BET HISTORY TABLE */
+  .bets-section { margin-top: 4px; }
+  .bets-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    background: #141317;
+    border-radius: 8px 8px 0 0;
+    border: 1px solid #272727;
+    border-bottom: none;
+  }
+  .bets-title { font-size: 12px; font-weight: 500; color: #a1a1a1; }
+  .bets-count-badge {
+    font-size: 10px;
+    background: #b37ff91f;
+    color: #b37ff9;
+    border: 1px solid #b37ff940;
+    border-radius: 12px;
+    padding: 2px 7px;
+  }
+  .bets-table-wrap {
+    background: #141317;
+    border: 1px solid #272727;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+    max-height: 240px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .bets-table-wrap::-webkit-scrollbar { display: none; }
+  .bets-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 64px 72px;
+    padding: 8px 12px;
+    font-size: 11px;
+    border-bottom: 1px solid #1d1c20;
+    align-items: center;
+    gap: 4px;
+  }
+  .bets-row:last-child { border-bottom: none; }
+  .bets-row.header { color: #767676; font-size: 10px; }
+  .bets-row.win  { background: linear-gradient(90deg, #02df9810, transparent); }
+  .bets-row.loss { background: linear-gradient(90deg, #fc5a5a0a, transparent); }
+
+  .round-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-align: center;
+  }
+  .col-right { text-align: right; }
+  .col-center { text-align: center; }
+  .text-green { color: #02df98; font-weight: 600; }
+  .text-red   { color: #fc5a5a; font-weight: 600; }
+  .text-dim   { color: #767676; }
+
+  .empty-bets {
+    padding: 24px 12px;
+    text-align: center;
+    font-size: 12px;
+    color: #767676;
+  }
+
+  @keyframes crash-float {
+    0%, 100% { transform: translate(-50%,-50%) scale(1); }
+    50%       { transform: translate(-50%,-50%) scale(1.03); }
+  }
+  .crash-multiplier          { animation: crash-float 2s ease-in-out infinite; }
+  .crash-multiplier.crashed  { animation: none; }
+  .crash-multiplier.idle-anim { animation: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-top">
+    <div class="logo">CryptoFlip</div>
+    <div class="balance-wrap" onclick="openBalanceModal()">
+      <span class="balance-sym">$</span>
+      <span class="balance-amount" id="balance">1,250.00</span>
+      <span class="balance-edit-hint">✎</span>
+    </div>
+    <div></div><!-- spacer for grid symmetry -->
+  </div>
+  <div class="game-tabs">
+    <button class="game-tab active" onclick="switchGame('crash')">Crash</button>
+    <button class="game-tab" onclick="switchGame('coinflip')">Coinflip</button>
+    <button class="game-tab" onclick="switchGame('cases')">Cases</button>
+    <button class="game-tab" onclick="switchGame('blackjack')">Blackjack</button>
+    <button class="game-tab" onclick="switchGame('jackpot')">Jackpot</button>
+  </div>
+</nav>
+
+<!-- Balance modal -->
+<div class="balance-modal" id="balance-modal" onclick="closeBalanceModal(event)">
+  <div class="balance-modal-box">
+    <h3>Wallet Settings</h3>
+
+    <!-- Balance row -->
+    <div class="balance-modal-input" style="font-size:11px;color:#767676;padding:6px 12px 2px;background:none;border:none;margin-bottom:0;text-transform:uppercase;letter-spacing:0.04em;">Balance ($)</div>
+    <input class="balance-modal-input" type="number" id="balance-input" min="0" step="0.01" inputmode="decimal" />
+
+    <!-- Divider -->
+    <div style="border-top:1px solid #2a2a30;margin:10px 0 12px;"></div>
+
+    <!-- Next 3 rounds odds -->
+    <div style="font-size:11px;color:#767676;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">
+      Set Next 3 Rounds Crash Point (×)
+    </div>
+    <div id="odds-rows" style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px;">
+      <!-- generated by JS -->
+    </div>
+
+    <div class="balance-modal-btns">
+      <button class="balance-modal-btn cancel" onclick="closeBalanceModal()">Cancel</button>
+      <button class="balance-modal-btn confirm" onclick="confirmBalance()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="main-layout">
+  <div class="content">
+
+    <!-- crash graph -->
+    <div class="crash-container">
+      <div class="crash-graph">
+        <canvas id="crash-canvas"></canvas>
+        <div class="crash-multiplier idle-anim" id="multiplier-display">1.00x</div>
+        <div class="crash-status waiting-badge" id="crash-status">READY</div>
+      </div>
+      <div class="bet-controls">
+        <div class="bet-row">
+          <div class="bet-input-wrap">
+            <div class="bet-label">Bet Amount ($)</div>
+            <input class="bet-input" type="number" value="10.00" min="0.01" step="0.01" id="bet-amount" inputmode="decimal" />
+          </div>
+          <div class="bet-input-wrap">
+            <div class="bet-label">Auto Cashout At</div>
+            <input class="bet-input" type="number" value="2.00" min="1.01" step="0.1" id="cashout-at" inputmode="decimal" />
+          </div>
+        </div>
+        <div class="payout-preview">
+          <span class="payout-preview-label">Projected payout</span>
+          <span class="payout-preview-val" id="projected-payout">20.00 SOL</span>
+        </div>
+        <div class="btn-row">
+          <button class="bet-btn half" onclick="halveBet()">½</button>
+          <button class="bet-btn half" onclick="doubleBet()">2x</button>
+          <button class="bet-btn primary" id="main-btn" onclick="mainAction()">Place Bet</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- round history badges -->
+    <div class="history-row" id="history-row"></div>
+
+    <!-- bet history -->
+    <div class="bets-section">
+      <div class="bets-header">
+        <span class="bets-title">Bet History</span>
+        <span class="bets-count-badge" id="bet-hist-count">0 bets</span>
+      </div>
+      <div class="bets-table-wrap">
+        <div class="bets-row header">
+          <span>Round</span>
+          <span>Bet</span>
+          <span class="col-center">Cashed</span>
+          <span class="col-right">Result</span>
+        </div>
+        <div id="bet-history-body">
+          <div class="empty-bets">No bets yet. Place a bet to get started.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const STATE = {
+  phase: 'idle', // 'idle' | 'waiting' | 'live' | 'crashed'
+  multiplier: 1.00,
+  crashPoint: 1.00,
+  betPlaced: false,
+  cashedOut: false,
+  betAmount: 10,
+  balance: 1250.00,
+  frame: null,
+  roundHistory: [],   // crash points for badges
+  betHistory: [],     // user's own bet records
+  roundNum: 0,
+  countdown: null,    // countdown interval ref
+  presetOdds: [null, null, null], // up to 3 forced crash points
+};
+
+const COLORS = ['#ee86ff','#02df98','#ffd66b','#b37ff9','#3aade0','#fc5a5a','#f9ad78'];
+
+function rand(min, max) { return Math.random() * (max - min) + min; }
+function randInt(min, max) { return Math.floor(rand(min, max + 1)); }
+
+function generateCrashPoint() {
+  // Check if there's a preset for this round slot (uses and removes the first non-null preset)
+  const idx = STATE.presetOdds.findIndex(v => v !== null);
+  if (idx !== -1) {
+    const forced = STATE.presetOdds[idx];
+    STATE.presetOdds[idx] = null;
+    refreshOddsPreview();
+    return parseFloat(forced.toFixed(2));
+  }
+  const r = Math.random();
+  if (r < 0.45) return parseFloat(rand(1.00, 1.99).toFixed(2));
+  if (r < 0.75) return parseFloat(rand(2.00, 5.00).toFixed(2));
+  if (r < 0.90) return parseFloat(rand(5.01, 15.00).toFixed(2));
+  if (r < 0.97) return parseFloat(rand(15.01, 50.00).toFixed(2));
+  return parseFloat(rand(50.01, 200.00).toFixed(2));
+}
+
+function multClass(m) {
+  if (m < 2) return 'mult-low';
+  if (m < 5) return 'mult-mid';
+  if (m < 20) return 'mult-high';
+  return 'mult-moon';
+}
+
+// ── CANVAS ──────────────────────────────────────────────────────────────────
+const canvas = document.getElementById('crash-canvas');
+const ctx = canvas.getContext('2d');
+let points = [];
+
+function resizeCanvas() {
+  canvas.width  = canvas.parentElement.offsetWidth;
+  canvas.height = canvas.parentElement.offsetHeight;
+}
+
+function drawCrash() {
+  resizeCanvas();
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  if (points.length < 2) return;
+  const maxMult = Math.max(STATE.multiplier + 0.5, 2.5);
+  const pL = 28, pB = 18, pT = 10, pR = 8;
+  const gw = w - pL - pR, gh = h - pB - pT;
+  const toX = i => pL + (i / points.length) * gw;
+  const toY = m => pT + gh - ((m - 1) / (maxMult - 1)) * gh;
+  // grid
+  ctx.strokeStyle = '#ffffff07'; ctx.lineWidth = 1;
+  for (let m = 1; m <= Math.ceil(maxMult); m++) {
+    const y = toY(m);
+    ctx.beginPath(); ctx.moveTo(pL, y); ctx.lineTo(w - pR, y); ctx.stroke();
+    ctx.fillStyle = '#555'; ctx.font = '9px Space Grotesk';
+    ctx.fillText(m + 'x', 3, y + 4);
+  }
+  // fill
+  const col = STATE.phase === 'crashed' ? '#fc5a5a' : '#ee86ff';
+  const grad = ctx.createLinearGradient(0, pT, 0, h - pB);
+  grad.addColorStop(0, col + '38'); grad.addColorStop(1, col + '04');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(1));
+  points.forEach((m, i) => ctx.lineTo(toX(i), toY(m)));
+  ctx.lineTo(toX(points.length - 1), h - pB);
+  ctx.lineTo(toX(0), h - pB);
+  ctx.closePath(); ctx.fill();
+  // line
+  ctx.strokeStyle = col; ctx.lineWidth = 2.5;
+  ctx.shadowColor = col + '70'; ctx.shadowBlur = 8;
+  ctx.beginPath();
+  points.forEach((m, i) => i === 0 ? ctx.moveTo(toX(i), toY(m)) : ctx.lineTo(toX(i), toY(m)));
+  ctx.stroke(); ctx.shadowBlur = 0;
+  // dot
+  if (STATE.phase === 'live') {
+    const lx = toX(points.length - 1), ly = toY(points[points.length - 1]);
+    ctx.fillStyle = '#ee86ff'; ctx.shadowColor = '#ee86ff'; ctx.shadowBlur = 14;
+    ctx.beginPath(); ctx.arc(lx, ly, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+}
+
+// ── HISTORY BADGES ───────────────────────────────────────────────────────────
+function renderRoundHistory() {
+  const row = document.getElementById('history-row');
+  row.innerHTML = STATE.roundHistory.slice(-20).reverse()
+    .map(m => `<div class="mult-badge ${multClass(m)}">${m.toFixed(2)}x</div>`).join('');
+}
+
+// ── BET HISTORY TABLE ────────────────────────────────────────────────────────
+function renderBetHistory() {
+  const body = document.getElementById('bet-history-body');
+  const count = STATE.betHistory.length;
+  document.getElementById('bet-hist-count').textContent = count + ' bet' + (count !== 1 ? 's' : '');
+
+  if (count === 0) {
+    body.innerHTML = '<div class="empty-bets">No bets yet. Place a bet to get started.</div>';
+    return;
+  }
+
+  body.innerHTML = STATE.betHistory.slice().reverse().map(b => {
+    const rowClass = b.result === 'win' ? 'win' : 'loss';
+    const crashedClass = multClass(b.crashedAt);
+
+    let cashedCol, resultCol;
+    if (b.result === 'win') {
+      cashedCol = `<span class="text-green">${b.cashedAt.toFixed(2)}x</span>`;
+      const profit = b.payout - b.bet;
+      resultCol = `<span class="text-green col-right">+${profit.toFixed(2)}</span>`;
+    } else {
+      cashedCol = `<span class="text-dim">—</span>`;
+      resultCol = `<span class="text-red col-right">-${b.bet.toFixed(2)}</span>`;
+    }
+
+    return `<div class="bets-row ${rowClass}">
+      <div><span class="mult-badge ${crashedClass}" style="font-size:10px">${b.crashedAt.toFixed(2)}x</span></div>
+      <span style="color:#a1a1a1">${b.bet.toFixed(2)}</span>
+      <span class="col-center">${cashedCol}</span>
+      <span class="col-right">${resultCol}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── GAME PHASES ───────────────────────────────────────────────────────────────
+function setIdle() {
+  STATE.phase = 'idle';
+  STATE.multiplier = 1.00;
+  STATE.betPlaced = false;
+  STATE.cashedOut = false;
+  points = [];
+  clearInterval(STATE.countdown);
+  STATE.countdown = null;
+  removeCountdownUI();
+  drawCrash();
+
+  document.getElementById('multiplier-display').textContent = '1.00x';
+  document.getElementById('multiplier-display').className = 'crash-multiplier idle-anim';
+  setStatus('READY', 'waiting-badge');
+
+  // show "New Round" button
+  const btn = document.getElementById('main-btn');
+  btn.textContent = 'New Round';
+  btn.className = 'bet-btn start-round';
+  btn.style.cssText = '';
+}
+
+function startRound() {
+  // called when user taps "New Round"
+  if (STATE.phase !== 'idle') return;
+  STATE.roundNum++;
+  STATE.crashPoint = generateCrashPoint();
+  STATE.phase = 'waiting';
+  setStatus('WAITING', 'waiting-badge');
+  document.getElementById('multiplier-display').textContent = '...';
+  document.getElementById('multiplier-display').className = 'crash-multiplier idle-anim';
+
+  // while waiting, button becomes Place Bet (if not already bet)
+  if (!STATE.betPlaced) {
+    resetToPlaceBet();
+  }
+
+  // 10-second countdown before going live — updateCountdownUI sets the center display
+  startCountdown(10, () => startLive());
+}
+
+function startCountdown(seconds, onFinish) {
+  clearInterval(STATE.countdown);
+  let remaining = seconds;
+  updateCountdownUI(remaining);
+
+  STATE.countdown = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(STATE.countdown);
+      STATE.countdown = null;
+      removeCountdownUI();
+      onFinish();
+    } else {
+      updateCountdownUI(remaining);
+    }
+  }, 1000);
+}
+
+function updateCountdownUI(n) {
+  // Big center countdown in the multiplier display
+  const md = document.getElementById('multiplier-display');
+  const urgentColor = n <= 3 ? '#fc5a5a' : '#b37ff9';
+  md.textContent = n + 's';
+  md.style.background = `linear-gradient(${urgentColor}, ${urgentColor}aa)`;
+  md.style.webkitBackgroundClip = 'text';
+  md.style.backgroundClip = 'text';
+  md.style.color = 'transparent';
+
+  // Small top-right badge
+  let el = document.getElementById('countdown-badge');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'countdown-badge';
+    el.style.cssText = `
+      position: absolute; top: 10px; right: 10px;
+      background: #1c1c1f; border: 1px solid #493367;
+      border-radius: 8px; padding: 4px 10px;
+      font-size: 12px; font-weight: 700; color: #b37ff9;
+      font-family: 'Space Grotesk', sans-serif;
+      display: flex; align-items: center; gap: 5px;
+      z-index: 10;
+    `;
+    document.querySelector('.crash-graph').appendChild(el);
+  }
+  el.style.color = urgentColor;
+  el.style.borderColor = n <= 3 ? '#fc5a5a60' : '#493367';
+  el.innerHTML = `<span style="color:#767676;font-weight:500">Starting in</span> ${n}s`;
+}
+
+function removeCountdownUI() {
+  const el = document.getElementById('countdown-badge');
+  if (el) el.remove();
+  // Reset multiplier display style
+  const md = document.getElementById('multiplier-display');
+  md.style.background = '';
+  md.style.webkitBackgroundClip = '';
+  md.style.backgroundClip = '';
+  md.style.color = '';
+}
+
+function startLive() {
+  if (STATE.phase !== 'waiting') return;
+  STATE.phase = 'live';
+  STATE.multiplier = 1.00;
+  points = [1.00];
+  const startTime = Date.now();
+
+  setStatus('LIVE', 'live');
+  document.getElementById('multiplier-display').className = 'crash-multiplier';
+
+  if (STATE.betPlaced) {
+    showCashoutBtn();
+  }
+
+  function frame() {
+    if (STATE.phase !== 'live') return;
+    const elapsed = (Date.now() - startTime) / 1000;
+    STATE.multiplier = parseFloat(Math.pow(Math.E, 0.15 * elapsed).toFixed(2));
+    STATE.multiplier = Math.max(1.00, Math.min(STATE.multiplier, 9999));
+    points.push(STATE.multiplier);
+    if (points.length > 300) points.shift();
+
+    document.getElementById('multiplier-display').textContent = STATE.multiplier.toFixed(2) + 'x';
+
+    if (STATE.betPlaced && !STATE.cashedOut) {
+      const cashoutAt = parseFloat(document.getElementById('cashout-at').value);
+      if (STATE.multiplier >= cashoutAt) {
+        autoCashout();
+      } else {
+        document.getElementById('main-btn').textContent = 'Cash Out ' + (STATE.betAmount * STATE.multiplier).toFixed(2);
+      }
+    }
+
+    drawCrash();
+    if (STATE.multiplier >= STATE.crashPoint) { doCrash(); return; }
+    STATE.frame = requestAnimationFrame(frame);
+  }
+  STATE.frame = requestAnimationFrame(frame);
+}
+
+function doCrash() {
+  STATE.phase = 'crashed';
+  cancelAnimationFrame(STATE.frame);
+
+  STATE.roundHistory.push(STATE.crashPoint);
+  if (STATE.roundHistory.length > 50) STATE.roundHistory.shift();
+
+  document.getElementById('multiplier-display').textContent = STATE.crashPoint.toFixed(2) + 'x';
+  document.getElementById('multiplier-display').className = 'crash-multiplier crashed';
+  setStatus('CRASHED', 'crashed-badge');
+
+  // record bet if one was placed and not cashed out
+  if (STATE.betPlaced && !STATE.cashedOut) {
+    STATE.betHistory.push({
+      round: STATE.roundNum,
+      bet: STATE.betAmount,
+      crashedAt: STATE.crashPoint,
+      cashedAt: null,
+      payout: 0,
+      result: 'loss',
+    });
+    renderBetHistory();
+  }
+
+  renderRoundHistory();
+  drawCrash();
+
+  setTimeout(setIdle, 2000);
+}
+
+function autoCashout() {
+  if (STATE.cashedOut || !STATE.betPlaced) return;
+  doCashout();
+}
+
+function doCashout() {
+  STATE.cashedOut = true;
+  const payout = parseFloat((STATE.betAmount * STATE.multiplier).toFixed(2));
+  STATE.balance = parseFloat((STATE.balance + payout).toFixed(2));
+  updateBalance();
+
+  // record win
+  STATE.betHistory.push({
+    round: STATE.roundNum,
+    bet: STATE.betAmount,
+    crashedAt: STATE.crashPoint,
+    cashedAt: STATE.multiplier,
+    payout,
+    result: 'win',
+  });
+  renderBetHistory();
+
+  resetToPlaceBet();
+}
+
+// ── MAIN ACTION BUTTON ────────────────────────────────────────────────────────
+// One button, four states: "New Round" / "Place Bet" / "Cancel Bet" / "Cash Out X"
+function mainAction() {
+  if (STATE.phase === 'idle') {
+    startRound();
+    return;
+  }
+  if ((STATE.phase === 'waiting' || STATE.phase === 'idle') && !STATE.betPlaced) {
+    placeBet();
+    return;
+  }
+  if (STATE.phase === 'waiting' && STATE.betPlaced) {
+    cancelBet();
+    return;
+  }
+  if (STATE.phase === 'live' && !STATE.betPlaced) {
+    placeBet();
+    return;
+  }
+  if (STATE.phase === 'live' && STATE.betPlaced && !STATE.cashedOut) {
+    doCashout();
+    return;
+  }
+}
+
+function placeBet() {
+  STATE.betAmount = parseFloat(document.getElementById('bet-amount').value) || 10;
+  if (STATE.betAmount > STATE.balance) { alert('Insufficient balance!'); return; }
+  STATE.betPlaced = true;
+  STATE.balance = parseFloat((STATE.balance - STATE.betAmount).toFixed(2));
+  updateBalance();
+
+  if (STATE.phase === 'live') {
+    showCashoutBtn();
+  } else if (STATE.phase === 'idle') {
+    // Start a new round automatically with countdown
+    STATE.roundNum++;
+    STATE.crashPoint = generateCrashPoint();
+    STATE.phase = 'waiting';
+    setStatus('WAITING', 'waiting-badge');
+    document.getElementById('multiplier-display').textContent = '...';
+    document.getElementById('multiplier-display').className = 'crash-multiplier idle-anim';
+    const btn = document.getElementById('main-btn');
+    btn.textContent = 'Cancel Bet';
+    btn.className = 'bet-btn cancel-queued';
+    btn.style.cssText = '';
+    startCountdown(10, () => startLive());
+  } else {
+    // waiting phase
+    const btn = document.getElementById('main-btn');
+    btn.textContent = 'Cancel Bet';
+    btn.className = 'bet-btn cancel-queued';
+    btn.style.cssText = '';
+  }
+}
+
+function cancelBet() {
+  STATE.betPlaced = false;
+  STATE.balance = parseFloat((STATE.balance + STATE.betAmount).toFixed(2));
+  updateBalance();
+  resetToPlaceBet();
+}
+
+function showCashoutBtn() {
+  const btn = document.getElementById('main-btn');
+  btn.textContent = 'Cash Out ' + (STATE.betAmount * STATE.multiplier).toFixed(2);
+  btn.className = 'bet-btn cashout';
+  btn.style.cssText = '';
+}
+
+function resetToPlaceBet() {
+  const btn = document.getElementById('main-btn');
+  btn.textContent = 'Place Bet';
+  btn.className = 'bet-btn primary';
+  btn.style.cssText = '';
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function halveBet() {
+  const inp = document.getElementById('bet-amount');
+  inp.value = Math.max(0.01, parseFloat(inp.value) / 2).toFixed(2);
+  updateProjected();
+}
+function doubleBet() {
+  const inp = document.getElementById('bet-amount');
+  inp.value = (parseFloat(inp.value) * 2).toFixed(2);
+  updateProjected();
+}
+function updateProjected() {
+  const bet = parseFloat(document.getElementById('bet-amount').value) || 0;
+  const co  = parseFloat(document.getElementById('cashout-at').value) || 2;
+  document.getElementById('projected-payout').textContent = '$' + (bet * co).toFixed(2);
+}
+function updateBalance() {
+  document.getElementById('balance').textContent =
+    STATE.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function setStatus(text, cls) {
+  const el = document.getElementById('crash-status');
+  el.textContent = text;
+  el.className = 'crash-status ' + cls;
+}
+
+// ── BALANCE MODAL ─────────────────────────────────────────────────────────────
+function buildOddsRows() {
+  const container = document.getElementById('odds-rows');
+  container.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const val = STATE.presetOdds[i];
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;';
+    row.innerHTML = `
+      <span style="font-size:11px;color:#a1a1a1;min-width:52px;">Round +${i+1}</span>
+      <input
+        id="odds-input-${i}"
+        type="number" min="1.01" step="0.1"
+        inputmode="decimal"
+        placeholder="Random"
+        value="${val !== null ? val : ''}"
+        style="flex:1;background:#0d0d0d;border:1px solid #3d3d45;border-radius:8px;
+               padding:8px 10px;color:#fff;font-size:14px;font-weight:600;
+               font-family:'Space Grotesk',sans-serif;outline:none;text-align:center;
+               -webkit-appearance:none;"
+        onfocus="this.style.borderColor='#6f5fcc'"
+        onblur="this.style.borderColor='#3d3d45'"
+      />
+      <span style="font-size:12px;color:#b37ff9;font-weight:600;">×</span>
+    `;
+    container.appendChild(row);
+  }
+}
+
+function refreshOddsPreview() {
+  // rebuild row values if modal is open
+  if (document.getElementById('balance-modal').classList.contains('open')) {
+    buildOddsRows();
+  }
+  renderPresetOddsBar();
+}
+
+function openBalanceModal() {
+  document.getElementById('balance-input').value = STATE.balance.toFixed(2);
+  buildOddsRows();
+  document.getElementById('balance-modal').classList.add('open');
+  setTimeout(() => document.getElementById('balance-input').focus(), 100);
+}
+function closeBalanceModal(e) {
+  if (e && e.target !== document.getElementById('balance-modal')) return;
+  document.getElementById('balance-modal').classList.remove('open');
+}
+function confirmBalance() {
+  const val = parseFloat(document.getElementById('balance-input').value);
+  if (!isNaN(val) && val >= 0) {
+    STATE.balance = parseFloat(val.toFixed(2));
+    updateBalance();
+  }
+  // Save preset odds
+  for (let i = 0; i < 3; i++) {
+    const inp = document.getElementById('odds-input-' + i);
+    if (inp) {
+      const v = parseFloat(inp.value);
+      STATE.presetOdds[i] = (!isNaN(v) && v >= 1.01) ? parseFloat(v.toFixed(2)) : null;
+    }
+  }
+  document.getElementById('balance-modal').classList.remove('open');
+  renderPresetOddsBar();
+}
+document.getElementById('balance-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') confirmBalance();
+  if (e.key === 'Escape') document.getElementById('balance-modal').classList.remove('open');
+});
+
+function renderPresetOddsBar() { /* removed from UI, presets still work internally */ }
+
+function switchGame(game) {
+  document.querySelectorAll('.game-tab').forEach(b => b.classList.remove('active'));
+  const idx = ['crash','coinflip','cases','blackjack','jackpot'].indexOf(game);
+  if (idx >= 0) document.querySelectorAll('.game-tab')[idx].classList.add('active');
+}
+
+document.getElementById('bet-amount').addEventListener('input', updateProjected);
+document.getElementById('cashout-at').addEventListener('input', updateProjected);
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+updateProjected();
+setIdle();
+</script>
+</body>
+</html>
