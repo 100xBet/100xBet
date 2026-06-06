@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html dir="ltr" lang="en">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <style>
@@ -15,14 +15,44 @@
     overflow-x: hidden;
   }
 
-  /* NAV */
+  /* ── LANGUAGE TOGGLE ─────────────────────────────────────────── */
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: #1a1a1e;
+    border: 1px solid #2e2e36;
+    border-radius: 18px;
+    padding: 3px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    justify-self: end;
+  }
+  .lang-opt {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 13px;
+    transition: all 0.16s ease;
+    color: #555;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+  .lang-opt.active {
+    background: linear-gradient(135deg, #5c4eb5, #b06fe0);
+    color: #fff;
+    box-shadow: 0 1px 6px #6f5fcc50;
+  }
+
+  /* ── NAV ─────────────────────────────────────────────────────── */
   nav {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 10px 14px 0;
     background: #141317;
-    border-bottom: 1px solid #272727;
+    border-bottom: 1px solid #222;
     position: sticky;
     top: 0;
     z-index: 50;
@@ -43,8 +73,6 @@
     background-clip: text;
     justify-self: start;
   }
-
-  /* BALANCE - true center */
   .balance-wrap {
     display: flex;
     align-items: center;
@@ -60,57 +88,9 @@
     justify-self: center;
   }
   .balance-wrap:active { background: linear-gradient(33deg, #9144fa8f, #0000 35%), #333; }
-  .balance-sym { color: #b37ff9; font-size: 13px; }
   .balance-amount { color: #b37ff9; font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
-  .balance-unit { color: #767676; font-size: 11px; }
-  .balance-edit-hint { color: #5a3a7a; font-size: 10px; margin-left: 2px; }
 
-  /* Balance modal */
-  .balance-modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: #000000a0;
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-  }
-  .balance-modal.open { display: flex; }
-  .balance-modal-box {
-    background: #1c1c1f;
-    border: 1px solid #3d3d45;
-    border-radius: 14px;
-    padding: 22px 20px;
-    width: 88%;
-    max-width: 320px;
-  }
-  .balance-modal-box h3 { font-size: 14px; color: #a1a1a1; margin-bottom: 12px; font-weight: 500; }
-  .balance-modal-input {
-    width: 100%;
-    background: #0d0d0d;
-    border: 1px solid #3d3d45;
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: #fff;
-    font-size: 20px;
-    font-weight: 700;
-    font-family: 'Space Grotesk', sans-serif;
-    outline: none;
-    text-align: center;
-    margin-bottom: 14px;
-    -webkit-appearance: none;
-  }
-  .balance-modal-input:focus { border-color: #6f5fcc; }
-  .balance-modal-btns { display: flex; gap: 8px; }
-  .balance-modal-btn {
-    flex: 1; padding: 10px; border-radius: 8px;
-    font-size: 13px; font-weight: 600; border: none;
-    cursor: pointer; font-family: 'Space Grotesk', sans-serif;
-  }
-  .balance-modal-btn.confirm { background: #72509f; color: #fff; }
-  .balance-modal-btn.cancel { background: #272727; color: #a1a1a1; }
-
-  /* GAME TABS */
+  /* ── GAME TABS ───────────────────────────────────────────────── */
   .game-tabs {
     display: flex;
     gap: 2px;
@@ -118,6 +98,7 @@
     overflow-x: auto;
     scrollbar-width: none;
     padding-bottom: 1px;
+    justify-content: center;
   }
   .game-tabs::-webkit-scrollbar { display: none; }
   .game-tab {
@@ -125,7 +106,7 @@
     border-radius: 6px 6px 0 0;
     font-size: 12px;
     font-weight: 500;
-    color: #767676;
+    color: #555;
     cursor: pointer;
     border: none;
     background: none;
@@ -137,15 +118,15 @@
   .game-tab:active { background: #1a1a1e; }
   .game-tab.active { color: #fff; background: linear-gradient(180deg, #0000, #5b3e828f), #1c1c1f; }
 
-  /* LAYOUT */
+  /* ── LAYOUT ──────────────────────────────────────────────────── */
   .main-layout { display: flex; flex-direction: column; }
   .content { flex: 1; padding: 10px 12px 20px; }
 
-  /* CRASH GRAPH */
+  /* ── CRASH GRAPH ─────────────────────────────────────────────── */
   .crash-container {
     background: linear-gradient(to bottom right, #1c1c1f, #1c1c1f 55%, #2f263d 75%, #2f263d);
     border-radius: 12px;
-    border: 1px solid #272727;
+    border: 1px solid #222;
     overflow: hidden;
     margin-bottom: 12px;
   }
@@ -186,71 +167,90 @@
   }
   .crash-status.live { background: #02df981f; color: #02df98; border: 1px solid #02df9840; }
   .crash-status.crashed-badge { background: #fc5a5a1f; color: #fc5a5a; border: 1px solid #fc5a5a40; }
-  .crash-status.waiting-badge { background: #2727271f; color: #767676; border: 1px solid #27272740; }
+  .crash-status.waiting-badge { background: #1c1c1f; color: #555; border: 1px solid #2a2a30; }
 
-  /* BET CONTROLS */
+  /* ── BET CONTROLS ────────────────────────────────────────────── */
   .bet-controls {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 12px;
+    gap: 9px;
+    padding: 11px 12px;
     background: #141317;
-    border-top: 1px solid #272727;
+    border-top: 1px solid #222;
   }
   .bet-row { display: flex; gap: 10px; }
   .bet-input-wrap { flex: 1; }
-  .bet-label { font-size: 10px; color: #767676; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .bet-label {
+    font-size: 10px;
+    color: #555;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
   .bet-input {
     width: 100%;
-    background: #1c1c1f;
-    border: 1px solid #272727;
+    background: #1a1a1e;
+    border: 1px solid #252528;
     border-radius: 8px;
-    padding: 10px 12px;
+    padding: 9px 12px;
     color: #fff;
     font-size: 15px;
     font-weight: 600;
     font-family: 'Space Grotesk', sans-serif;
     outline: none;
     -webkit-appearance: none;
+    transition: border-color 0.15s;
   }
   .bet-input:focus { border-color: #6f5fcc; }
 
-  .payout-preview {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 2px 0;
-  }
-  .payout-preview-label { font-size: 10px; color: #767676; text-transform: uppercase; letter-spacing: 0.04em; }
-  .payout-preview-val { font-size: 16px; font-weight: 700; color: #02df98; }
-
-  .btn-row { display: flex; gap: 6px; }
+  .btn-row { display: flex; gap: 5px; }
   .bet-btn {
     flex: 1;
-    padding: 13px 10px;
-    border-radius: 10px;
-    font-size: 14px;
+    padding: 11px 10px;
+    border-radius: 9px;
+    font-size: 13px;
     font-weight: 700;
     cursor: pointer;
     border: none;
-    transition: transform 0.1s;
+    transition: transform 0.1s, opacity 0.1s;
     font-family: 'Space Grotesk', sans-serif;
-    box-shadow: 0 4px 10px #0000002a, inset 0 1px #ffffff12, inset 0 -2px #0000003d;
+    box-shadow: 0 3px 8px #0000002a, inset 0 1px #ffffff10, inset 0 -1px #0000002d;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    letter-spacing: 0.01em;
   }
   .bet-btn.primary { background: #11a777; color: #fff; }
   .bet-btn.primary:active { background: #0e8d66; transform: scale(0.98); }
-  .bet-btn.cashout { background: #02df98; color: #0a1a14; }
+  .bet-btn.cashout { background: #02df98; color: #071a11; font-size: 12px; }
   .bet-btn.cashout:active { background: #00c586; transform: scale(0.98); }
-  .bet-btn.cancel-queued { background: #272727; color: #a1a1a1; }
-  .bet-btn.cancel-queued:active { background: #333; transform: scale(0.98); }
+  .bet-btn.cancel-queued { background: #222; color: #666; }
+  .bet-btn.cancel-queued:active { background: #2a2a2a; transform: scale(0.98); }
   .bet-btn.start-round { background: #72509f; color: #fff; }
   .bet-btn.start-round:active { background: #583f75; transform: scale(0.98); }
-  .bet-btn.half { background: #272727; color: #a1a1a1; font-size: 12px; flex: 0 0 46px; }
-  .bet-btn.half:active { background: #323238; }
+  .bet-btn.side-btn {
+    background: #1a1a1e;
+    color: #767676;
+    font-size: 12px;
+    font-weight: 700;
+    flex: 0 0 40px;
+    border: 1px solid #252528;
+    box-shadow: none;
+  }
+  .bet-btn.side-btn:active { background: #252530; color: #fff; }
+  .bet-btn.max-bet {
+    background: #1a1a1e;
+    color: #b37ff9;
+    font-size: 11px;
+    font-weight: 700;
+    flex: 0 0 44px;
+    border: 1px solid #3d2f55;
+    box-shadow: none;
+    letter-spacing: 0.03em;
+  }
+  .bet-btn.max-bet:active { background: #24203a; }
 
-  /* HISTORY BADGES */
+  /* ── HISTORY BADGES ──────────────────────────────────────────── */
   .history-row {
     display: flex;
     gap: 4px;
@@ -266,12 +266,12 @@
     font-weight: 600;
     flex-shrink: 0;
   }
-  .mult-low  { background: #1c1c1f; color: #a1a1a1; border: 1px solid #272727; }
-  .mult-mid  { background: #11a7771f; color: #02df98; border: 1px solid #11a77740; }
-  .mult-high { background: #b27cfd1f; color: #b37ff9; border: 1px solid #b37ff940; }
-  .mult-moon { background: #ffd66b1f; color: #ffd66b; border: 1px solid #ffd66b40; }
+  .mult-low  { background: #1a1a1e; color: #666; border: 1px solid #252528; }
+  .mult-mid  { background: #0d2418; color: #02df98; border: 1px solid #11a77730; }
+  .mult-high { background: #1e1430; color: #b37ff9; border: 1px solid #b37ff930; }
+  .mult-moon { background: #211c0a; color: #ffd66b; border: 1px solid #ffd66b30; }
 
-  /* BET HISTORY TABLE */
+  /* ── BET HISTORY TABLE ───────────────────────────────────────── */
   .bets-section { margin-top: 4px; }
   .bets-header {
     display: flex;
@@ -280,21 +280,21 @@
     padding: 9px 12px;
     background: #141317;
     border-radius: 8px 8px 0 0;
-    border: 1px solid #272727;
+    border: 1px solid #222;
     border-bottom: none;
   }
-  .bets-title { font-size: 12px; font-weight: 500; color: #a1a1a1; }
+  .bets-title { font-size: 12px; font-weight: 600; color: #888; }
   .bets-count-badge {
     font-size: 10px;
-    background: #b37ff91f;
+    background: #b37ff912;
     color: #b37ff9;
-    border: 1px solid #b37ff940;
+    border: 1px solid #b37ff925;
     border-radius: 12px;
     padding: 2px 7px;
   }
   .bets-table-wrap {
     background: #141317;
-    border: 1px solid #272727;
+    border: 1px solid #222;
     border-radius: 0 0 8px 8px;
     overflow: hidden;
     max-height: 240px;
@@ -307,35 +307,184 @@
     grid-template-columns: 60px 1fr 64px 72px;
     padding: 8px 12px;
     font-size: 11px;
-    border-bottom: 1px solid #1d1c20;
+    border-bottom: 1px solid #1a1a1e;
     align-items: center;
     gap: 4px;
   }
   .bets-row:last-child { border-bottom: none; }
-  .bets-row.header { color: #767676; font-size: 10px; }
-  .bets-row.win  { background: linear-gradient(90deg, #02df9810, transparent); }
-  .bets-row.loss { background: linear-gradient(90deg, #fc5a5a0a, transparent); }
+  .bets-row.header { color: #444; font-size: 10px; font-weight: 600; letter-spacing: 0.03em; }
+  .bets-row.win  { background: linear-gradient(90deg, #02df9808, transparent); }
+  .bets-row.loss { background: linear-gradient(90deg, #fc5a5a06, transparent); }
 
-  .round-badge {
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 4px;
-    text-align: center;
-  }
   .col-right { text-align: right; }
   .col-center { text-align: center; }
   .text-green { color: #02df98; font-weight: 600; }
   .text-red   { color: #fc5a5a; font-weight: 600; }
-  .text-dim   { color: #767676; }
+  .text-dim   { color: #444; }
 
   .empty-bets {
     padding: 24px 12px;
     text-align: center;
     font-size: 12px;
-    color: #767676;
+    color: #444;
   }
 
+  /* ── WALLET MODAL ────────────────────────────────────────────── */
+  .balance-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000000b0;
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .balance-modal.open { display: flex; }
+  .balance-modal-box {
+    background: #161618;
+    border: 1px solid #2a2a30;
+    border-radius: 16px;
+    padding: 20px 18px;
+    width: 88%;
+    max-width: 320px;
+  }
+
+  /* Deposit / Withdraw action buttons — slim row layout */
+  .wallet-action-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 11px 10px;
+    border-radius: 9px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    transition: transform 0.1s, box-shadow 0.1s;
+    -webkit-tap-highlight-color: transparent;
+    letter-spacing: 0.01em;
+  }
+  .wallet-action-btn.deposit {
+    background: #0a1f14;
+    color: #02df98;
+    border: 1px solid #02df9825;
+    box-shadow: 0 0 14px #02df9818, 0 0 30px #02df9808;
+  }
+  .wallet-action-btn.deposit:active {
+    transform: scale(0.97);
+    box-shadow: 0 0 8px #02df9812;
+  }
+  .wallet-action-btn.withdraw {
+    background: #1f0a0a;
+    color: #fc5a5a;
+    border: 1px solid #fc5a5a25;
+    box-shadow: 0 0 14px #fc5a5a18, 0 0 30px #fc5a5a08;
+  }
+  .wallet-action-btn.withdraw:active {
+    transform: scale(0.97);
+    box-shadow: 0 0 8px #fc5a5a12;
+  }
+  .wallet-btn-sym {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    opacity: 0.9;
+  }
+
+  .balance-modal-input {
+    width: 100%;
+    background: #0d0d0d;
+    border: 1px solid #2a2a30;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+    outline: none;
+    text-align: center;
+    margin-bottom: 10px;
+    -webkit-appearance: none;
+    transition: border-color 0.15s;
+  }
+  .balance-modal-input:focus { border-color: #6f5fcc; }
+
+  .balance-modal-btn {
+    flex: 1; padding: 10px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; border: none;
+    cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 0.01em;
+  }
+  .balance-modal-btn.confirm { background: #72509f; color: #fff; }
+  .balance-modal-btn.confirm-green { background: #0a6644; color: #02df98; border: 1px solid #02df9825; }
+  .balance-modal-btn.confirm-white { background: #fff; color: #0d0d0d; }
+  .balance-modal-btn.cancel { background: #1a1a1e; color: #555; border: 1px solid #252528; }
+
+  .quick-amt-btn {
+    flex: 1;
+    padding: 7px 4px;
+    border-radius: 7px;
+    border: 1px solid #252528;
+    background: #0d0d0d;
+    color: #666;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.1s;
+    text-align: center;
+  }
+  .quick-amt-btn:active { background: #1a1a1e; color: #fff; }
+
+  /* Percent quick-fill row */
+  .pct-btn-row { display: flex; gap: 5px; margin-bottom: 10px; }
+  .pct-btn {
+    flex: 1;
+    padding: 6px 4px;
+    border-radius: 7px;
+    border: 1px solid #252528;
+    background: #0d0d0d;
+    color: #666;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.1s;
+    text-align: center;
+  }
+  .pct-btn:active { background: #1a1a1e; color: #fff; }
+  .pct-btn.max-btn {
+    background: #1a1428;
+    color: #b37ff9;
+    border-color: #3d2f5540;
+  }
+  .pct-btn.max-btn:active { background: #241c36; }
+
+  .section-label {
+    font-size: 10px;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .divider { border-top: 1px solid #1e1e24; margin: 14px 0; }
+  .back-btn {
+    background: none; border: none; color: #555;
+    font-size: 16px; cursor: pointer; padding: 0;
+    line-height: 1; display: flex; align-items: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+  }
+  .back-btn:active { color: #fff; }
+
+  /* ── CASHOUT ANIMATION ───────────────────────────────────────── */
   @keyframes crash-float {
     0%, 100% { transform: translate(-50%,-50%) scale(1); }
     50%       { transform: translate(-50%,-50%) scale(1.03); }
@@ -343,6 +492,14 @@
   .crash-multiplier          { animation: crash-float 2s ease-in-out infinite; }
   .crash-multiplier.crashed  { animation: none; }
   .crash-multiplier.idle-anim { animation: none; }
+
+  /* ── RTL — layout parity with LTR ───────────────────────────── */
+  /* No layout changes in RTL — only text direction flips naturally */
+  html[dir="rtl"] .crash-status { left: 10px; right: auto; }
+  html[dir="rtl"] .bets-row.win  { background: linear-gradient(270deg, #02df9808, transparent); }
+  html[dir="rtl"] .bets-row.loss { background: linear-gradient(270deg, #fc5a5a06, transparent); }
+  html[dir="rtl"] .col-right { text-align: left; }
+  html[dir="rtl"] #countdown-badge { right: auto !important; left: 10px !important; }
 </style>
 </head>
 <body>
@@ -351,52 +508,119 @@
   <div class="nav-top">
     <div class="logo">CryptoFlip</div>
     <div class="balance-wrap" onclick="openBalanceModal()">
-      <span class="balance-sym">$</span>
-      <span class="balance-amount" id="balance">1,250.00</span>
-      <span class="balance-edit-hint">✎</span>
+      <span class="balance-amount" id="balance">0.00</span>
     </div>
-    <div></div><!-- spacer for grid symmetry -->
+    <div class="lang-toggle" onclick="toggleLanguage()">
+      <div class="lang-opt active" id="lang-en">EN</div>
+      <div class="lang-opt" id="lang-ar">AR</div>
+    </div>
   </div>
   <div class="game-tabs">
-    <button class="game-tab active" onclick="switchGame('crash')">Crash</button>
-    <button class="game-tab" onclick="switchGame('coinflip')">Coinflip</button>
-    <button class="game-tab" onclick="switchGame('cases')">Cases</button>
-    <button class="game-tab" onclick="switchGame('blackjack')">Blackjack</button>
-    <button class="game-tab" onclick="switchGame('jackpot')">Jackpot</button>
+    <button class="game-tab active" onclick="switchGame('crash')" data-i18n="tab_crash">Crash</button>
+    <button class="game-tab" onclick="switchGame('coinflip')" data-i18n="tab_coinflip">Coinflip</button>
+    <button class="game-tab" onclick="switchGame('jackpot')" data-i18n="tab_jackpot">Jackpot</button>
   </div>
 </nav>
 
-<!-- Balance modal -->
-<div class="balance-modal" id="balance-modal" onclick="closeBalanceModal(event)">
-  <div class="balance-modal-box">
-    <h3>Wallet Settings</h3>
-
-    <!-- Balance row -->
-    <div class="balance-modal-input" style="font-size:11px;color:#767676;padding:6px 12px 2px;background:none;border:none;margin-bottom:0;text-transform:uppercase;letter-spacing:0.04em;">Balance ($)</div>
-    <input class="balance-modal-input" type="number" id="balance-input" min="0" step="0.01" inputmode="decimal" />
-
-    <!-- Divider -->
-    <div style="border-top:1px solid #2a2a30;margin:10px 0 12px;"></div>
-
-    <!-- Next 3 rounds odds -->
-    <div style="font-size:11px;color:#767676;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">
-      Set Next 3 Rounds Crash Point (×)
-    </div>
-    <div id="odds-rows" style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px;">
-      <!-- generated by JS -->
-    </div>
-
-    <div class="balance-modal-btns">
-      <button class="balance-modal-btn cancel" onclick="closeBalanceModal()">Cancel</button>
-      <button class="balance-modal-btn confirm" onclick="confirmBalance()">Save</button>
-    </div>
+<!-- Coming Soon overlay -->
+<div id="coming-soon-page" style="display:none;position:fixed;inset:0;background:#0d0d0d;z-index:300;flex-direction:column;align-items:center;justify-content:center;">
+  <div style="text-align:center;padding:24px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#3d2f55;margin-bottom:18px;" data-i18n="under_construction">Under Construction</div>
+    <div id="coming-soon-game-name" style="font-size:38px;font-weight:700;color:#fff;letter-spacing:-1px;margin-bottom:10px;"></div>
+    <div style="font-size:14px;color:#555;margin-bottom:36px;line-height:1.6;" id="coming-soon-desc">This game is being built.<br>Check back soon.</div>
+    <div style="width:40px;height:2px;background:linear-gradient(90deg,#6f5fcc,#ee86ff);margin:0 auto 32px;border-radius:2px;"></div>
+    <button onclick="closeComingSoon()" style="background:#fff;color:#0d0d0d;border:none;border-radius:9px;padding:12px 30px;font-size:13px;font-weight:700;font-family:'Space Grotesk',sans-serif;cursor:pointer;box-shadow:0 0 20px #ffffff30;" data-i18n="go_back">Go Back</button>
   </div>
 </div>
 
+<!-- Cashout animation -->
+<div id="cashout-anim" style="display:none;position:fixed;inset:0;z-index:500;pointer-events:none;align-items:center;justify-content:center;">
+  <div id="cashout-anim-inner" style="background:linear-gradient(135deg,#02df9815,#02df9832);border:1px solid #02df9860;border-radius:16px;padding:20px 32px;text-align:center;transform:scale(0.7);opacity:0;transition:transform 0.22s cubic-bezier(.34,1.56,.64,1),opacity 0.18s ease;">
+    <div style="font-size:11px;color:#02df98;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;" data-i18n="cashed_out">Cashed Out</div>
+    <div id="cashout-anim-amount" style="font-size:40px;font-weight:700;color:#02df98;letter-spacing:-1px;line-height:1;"></div>
+  </div>
+</div>
+
+<!-- Wallet modal -->
+<div class="balance-modal" id="balance-modal" onclick="closeBalanceModal(event)">
+  <div class="balance-modal-box" id="wallet-box">
+
+    <!-- MAIN -->
+    <div id="wallet-main">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <span style="font-size:15px;color:#fff;font-weight:700;" data-i18n="wallet">Wallet</span>
+        <span style="font-size:11px;color:#444;"><span data-i18n="balance_label">Balance:</span> <span style="color:#b37ff9;font-weight:700;" id="modal-balance-display">$0.00</span></span>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <button class="wallet-action-btn deposit" onclick="showWalletSub('deposit')">
+          <span class="wallet-btn-sym">+</span>
+          <span data-i18n="deposit">Deposit</span>
+        </button>
+        <button class="wallet-action-btn withdraw" onclick="showWalletSub('withdraw')">
+          <span class="wallet-btn-sym">-</span>
+          <span data-i18n="withdraw">Withdraw</span>
+        </button>
+      </div>
+      <div class="divider"></div>
+      <div class="section-label" data-i18n="referral_code">Referral Code</div>
+      <div style="display:flex;gap:7px;margin-bottom:4px;">
+        <input id="referral-input" type="text" placeholder="Enter code..." maxlength="10"
+          style="flex:1;background:#0d0d0d;border:1px solid #2a2a30;border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;font-weight:600;font-family:'Space Grotesk',sans-serif;outline:none;text-transform:uppercase;letter-spacing:0.06em;-webkit-appearance:none;transition:border-color 0.15s;"
+          onfocus="this.style.borderColor='#6f5fcc'" onblur="this.style.borderColor='#2a2a30'"
+          oninput="handleReferralInput(this)" />
+        <button class="balance-modal-btn confirm" style="flex:0 0 auto;padding:9px 13px;font-size:12px;" onclick="applyReferral()" data-i18n="apply">Apply</button>
+      </div>
+      <div id="referral-msg" style="font-size:11px;min-height:15px;margin-bottom:8px;"></div>
+      <div id="odds-section" style="display:none;">
+        <div class="divider" style="margin-top:4px;"></div>
+        <div class="section-label" data-i18n="set_odds">Set Next 3 Rounds Crash Point (x)</div>
+        <div id="odds-rows" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;"></div>
+      </div>
+      <button class="balance-modal-btn cancel" style="width:100%;" onclick="closeBalanceModal()" data-i18n="close">Close</button>
+    </div>
+
+    <!-- DEPOSIT -->
+    <div id="wallet-deposit" style="display:none;">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px;">
+        <button class="back-btn" onclick="showWalletMain()">&#8592;</button>
+        <span style="font-size:15px;color:#fff;font-weight:700;" data-i18n="deposit">Deposit</span>
+      </div>
+      <div class="section-label" data-i18n="amount_label">Amount ($)</div>
+      <input class="balance-modal-input" type="number" id="deposit-input" min="0" step="0.01" inputmode="decimal" placeholder="0.00" />
+      <div style="display:flex;gap:5px;margin-bottom:12px;">
+        <button class="quick-amt-btn" onclick="setDepositAmt(10)">$10</button>
+        <button class="quick-amt-btn" onclick="setDepositAmt(50)">$50</button>
+        <button class="quick-amt-btn" onclick="setDepositAmt(100)">$100</button>
+        <button class="quick-amt-btn" onclick="setDepositAmt(500)">$500</button>
+      </div>
+      <button class="balance-modal-btn confirm-green" style="width:100%;padding:11px;" onclick="confirmDeposit()" data-i18n="add_funds">Add Funds</button>
+    </div>
+
+    <!-- WITHDRAW -->
+    <div id="wallet-withdraw" style="display:none;">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px;">
+        <button class="back-btn" onclick="showWalletMain()">&#8592;</button>
+        <span style="font-size:15px;color:#fff;font-weight:700;" data-i18n="withdraw">Withdraw</span>
+      </div>
+      <div class="section-label" data-i18n="amount_label">Amount ($)</div>
+      <input class="balance-modal-input" type="number" id="withdraw-input" min="0" step="0.01" inputmode="decimal" placeholder="0.00" />
+      <div style="font-size:11px;color:#444;margin-bottom:8px;"><span data-i18n="available">Available:</span> <span style="color:#b37ff9;font-weight:700;" id="withdraw-avail">$0.00</span></div>
+      <div class="pct-btn-row">
+        <button class="pct-btn" onclick="setWithdrawPct(0.25)">25%</button>
+        <button class="pct-btn" onclick="setWithdrawPct(0.50)">50%</button>
+        <button class="pct-btn" onclick="setWithdrawPct(0.75)">75%</button>
+        <button class="pct-btn max-btn" onclick="setWithdrawPct(1)" data-i18n="max">MAX</button>
+      </div>
+      <button class="balance-modal-btn confirm-white" style="width:100%;padding:11px;" onclick="confirmWithdraw()" data-i18n="withdraw_funds">Withdraw Funds</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Main content -->
 <div class="main-layout">
   <div class="content">
 
-    <!-- crash graph -->
     <div class="crash-container">
       <div class="crash-graph">
         <canvas id="crash-canvas"></canvas>
@@ -406,44 +630,39 @@
       <div class="bet-controls">
         <div class="bet-row">
           <div class="bet-input-wrap">
-            <div class="bet-label">Bet Amount ($)</div>
+            <div class="bet-label" data-i18n="bet_amount">Bet Amount ($)</div>
             <input class="bet-input" type="number" value="10.00" min="0.01" step="0.01" id="bet-amount" inputmode="decimal" />
           </div>
           <div class="bet-input-wrap">
-            <div class="bet-label">Auto Cashout At</div>
-            <input class="bet-input" type="number" value="2.00" min="1.01" step="0.1" id="cashout-at" inputmode="decimal" />
+            <div class="bet-label" data-i18n="auto_cashout">Auto Cashout At</div>
+            <input class="bet-input" type="number" value="0" min="0" step="0.1" id="cashout-at" inputmode="decimal" placeholder="0 = off" />
           </div>
         </div>
-        <div class="payout-preview">
-          <span class="payout-preview-label">Projected payout</span>
-          <span class="payout-preview-val" id="projected-payout">20.00 SOL</span>
-        </div>
         <div class="btn-row">
-          <button class="bet-btn half" onclick="halveBet()">½</button>
-          <button class="bet-btn half" onclick="doubleBet()">2x</button>
-          <button class="bet-btn primary" id="main-btn" onclick="mainAction()">Place Bet</button>
+          <button class="bet-btn side-btn" onclick="halveBet()">½</button>
+          <button class="bet-btn side-btn" onclick="doubleBet()">2x</button>
+          <button class="bet-btn max-bet" onclick="maxBet()" data-i18n="max">MAX</button>
+          <button class="bet-btn primary" id="main-btn" onclick="mainAction()" data-i18n="place_bet">Place Bet</button>
         </div>
       </div>
     </div>
 
-    <!-- round history badges -->
     <div class="history-row" id="history-row"></div>
 
-    <!-- bet history -->
     <div class="bets-section">
       <div class="bets-header">
-        <span class="bets-title">Bet History</span>
-        <span class="bets-count-badge" id="bet-hist-count">0 bets</span>
+        <span class="bets-title" data-i18n="bet_history">Bet History</span>
+        <span class="bets-count-badge" id="bet-hist-count">0 <span data-i18n="bets">bets</span></span>
       </div>
       <div class="bets-table-wrap">
         <div class="bets-row header">
-          <span>Round</span>
-          <span>Bet</span>
-          <span class="col-center">Cashed</span>
-          <span class="col-right">Result</span>
+          <span data-i18n="round">Round</span>
+          <span data-i18n="bet_col">Bet</span>
+          <span class="col-center" data-i18n="cashed">Cashed</span>
+          <span class="col-right" data-i18n="result">Result</span>
         </div>
         <div id="bet-history-body">
-          <div class="empty-bets">No bets yet. Place a bet to get started.</div>
+          <div class="empty-bets" data-i18n="no_bets">No bets yet. Place a bet to get started.</div>
         </div>
       </div>
     </div>
@@ -452,29 +671,106 @@
 </div>
 
 <script>
+// ── TRANSLATIONS ──────────────────────────────────────────────────────────────
+const TRANSLATIONS = {
+  en: {
+    tab_crash:'Crash', tab_coinflip:'Coinflip', tab_jackpot:'Jackpot',
+    under_construction:'Under Construction', go_back:'Go Back',
+    coming_soon_desc:'This game is being built.<br>Check back soon.',
+    cashed_out:'Cashed Out', wallet:'Wallet', balance_label:'Balance:',
+    deposit:'Deposit', withdraw:'Withdraw', referral_code:'Referral Code',
+    apply:'Apply', set_odds:'Set Next 3 Rounds Crash Point (x)', close:'Close',
+    amount_label:'Amount ($)', add_funds:'Add Funds', available:'Available:',
+    max:'MAX', withdraw_funds:'Withdraw Funds', bet_amount:'Bet Amount ($)',
+    auto_cashout:'Auto Cashout At', place_bet:'Place Bet', bet_history:'Bet History',
+    bets:'bets', bet_col:'Bet', round:'Round', cashed:'Cashed', result:'Result',
+    no_bets:'No bets yet. Place a bet to get started.',
+    status_ready:'READY', status_waiting:'WAITING', status_live:'LIVE', status_crashed:'CRASHED',
+    starting_in:'Starting in', new_round:'New Round', cancel_bet:'Cancel Bet',
+    cash_out:'Cash Out', insufficient:'Insufficient balance!',
+    enter_code:'Enter code...', code_applied:'Code applied. You can now set round odds below.',
+    enter_a_code:'Please enter a code.', invalid_code:'Invalid code.', round_label:'Round +',
+  },
+  ar: {
+    tab_crash:'كراش', tab_coinflip:'قلب العملة', tab_jackpot:'جاكبوت',
+    under_construction:'قيد الإنشاء', go_back:'رجوع',
+    coming_soon_desc:'هذه اللعبة قيد البناء.<br>تحقق مرة أخرى قريباً.',
+    cashed_out:'تم السحب', wallet:'المحفظة', balance_label:'الرصيد:',
+    deposit:'إيداع', withdraw:'سحب', referral_code:'كود الإحالة',
+    apply:'تطبيق', set_odds:'تحديد نقطة تحطم الجولات الـ3 التالية (×)', close:'إغلاق',
+    amount_label:'المبلغ ($)', add_funds:'إضافة أموال', available:'المتاح:',
+    max:'الكل', withdraw_funds:'سحب الأموال', bet_amount:'مبلغ الرهان ($)',
+    auto_cashout:'سحب تلقائي عند', place_bet:'وضع الرهان', bet_history:'سجل الرهانات',
+    bets:'رهانات', bet_col:'الرهان', round:'الجولة', cashed:'السحب', result:'النتيجة',
+    no_bets:'لا توجد رهانات بعد. ضع رهاناً للبدء.',
+    status_ready:'جاهز', status_waiting:'انتظار', status_live:'مباشر', status_crashed:'تحطّم',
+    starting_in:'يبدأ خلال', new_round:'جولة جديدة', cancel_bet:'إلغاء الرهان',
+    cash_out:'اسحب', insufficient:'الرصيد غير كافٍ!',
+    enter_code:'أدخل الكود...', code_applied:'تم تطبيق الكود. يمكنك الآن تحديد الأوقات.',
+    enter_a_code:'الرجاء إدخال كود.', invalid_code:'كود غير صحيح.', round_label:'جولة +',
+  }
+};
+
+let currentLang = 'en';
+function t(k) { return TRANSLATIONS[currentLang][k] || TRANSLATIONS.en[k] || k; }
+
+function toggleLanguage() {
+  currentLang = currentLang === 'en' ? 'ar' : 'en';
+  const isAr = currentLang === 'ar';
+  document.documentElement.dir = isAr ? 'rtl' : 'ltr';
+  document.documentElement.lang = currentLang;
+  document.getElementById('lang-en').classList.toggle('active', !isAr);
+  document.getElementById('lang-ar').classList.toggle('active', isAr);
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (TRANSLATIONS[currentLang][k]) el.innerHTML = TRANSLATIONS[currentLang][k];
+  });
+  document.getElementById('referral-input').placeholder = t('enter_code');
+  document.getElementById('coming-soon-desc').innerHTML = t('coming_soon_desc');
+  // refresh dynamic state text
+  applyDynamicI18n();
+}
+
+function applyDynamicI18n() {
+  const statusEl = document.getElementById('crash-status');
+  const cls = statusEl.className;
+  if (cls.includes('live')) setStatus(t('status_live'), 'live');
+  else if (cls.includes('crashed-badge')) setStatus(t('status_crashed'), 'crashed-badge');
+  else setStatus(STATE.phase === 'idle' ? t('status_ready') : t('status_waiting'), 'waiting-badge');
+
+  const btn = document.getElementById('main-btn');
+  if (STATE.phase === 'idle') btn.textContent = t('new_round');
+  else if (STATE.phase === 'waiting' && !STATE.betPlaced) btn.textContent = t('place_bet');
+  else if (STATE.phase === 'waiting' && STATE.betPlaced) btn.textContent = t('cancel_bet');
+  else if (STATE.phase === 'live' && !STATE.betPlaced) btn.textContent = t('place_bet');
+  else if (STATE.phase === 'live' && STATE.betPlaced && !STATE.cashedOut)
+    btn.textContent = t('cash_out') + ' ' + (STATE.betAmount * STATE.multiplier).toFixed(2);
+
+  renderBetHistory();
+  updateBetCount();
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
 const STATE = {
-  phase: 'idle', // 'idle' | 'waiting' | 'live' | 'crashed'
+  phase: 'idle',
   multiplier: 1.00,
   crashPoint: 1.00,
   betPlaced: false,
   cashedOut: false,
   betAmount: 10,
-  balance: 1250.00,
+  balance: 0,
   frame: null,
-  roundHistory: [],   // crash points for badges
-  betHistory: [],     // user's own bet records
+  roundHistory: [],
+  betHistory: [],
   roundNum: 0,
-  countdown: null,    // countdown interval ref
-  presetOdds: [null, null, null], // up to 3 forced crash points
+  countdown: null,
+  presetOdds: [null, null, null],
+  pendingCashout: null,
 };
 
-const COLORS = ['#ee86ff','#02df98','#ffd66b','#b37ff9','#3aade0','#fc5a5a','#f9ad78'];
-
 function rand(min, max) { return Math.random() * (max - min) + min; }
-function randInt(min, max) { return Math.floor(rand(min, max + 1)); }
 
 function generateCrashPoint() {
-  // Check if there's a preset for this round slot (uses and removes the first non-null preset)
   const idx = STATE.presetOdds.findIndex(v => v !== null);
   if (idx !== -1) {
     const forced = STATE.presetOdds[idx];
@@ -491,13 +787,13 @@ function generateCrashPoint() {
 }
 
 function multClass(m) {
-  if (m < 2) return 'mult-low';
-  if (m < 5) return 'mult-mid';
+  if (m < 2)  return 'mult-low';
+  if (m < 5)  return 'mult-mid';
   if (m < 20) return 'mult-high';
   return 'mult-moon';
 }
 
-// ── CANVAS ──────────────────────────────────────────────────────────────────
+// ── CANVAS ────────────────────────────────────────────────────────────────────
 const canvas = document.getElementById('crash-canvas');
 const ctx = canvas.getContext('2d');
 let points = [];
@@ -517,18 +813,16 @@ function drawCrash() {
   const gw = w - pL - pR, gh = h - pB - pT;
   const toX = i => pL + (i / points.length) * gw;
   const toY = m => pT + gh - ((m - 1) / (maxMult - 1)) * gh;
-  // grid
-  ctx.strokeStyle = '#ffffff07'; ctx.lineWidth = 1;
+  ctx.strokeStyle = '#ffffff05'; ctx.lineWidth = 1;
   for (let m = 1; m <= Math.ceil(maxMult); m++) {
     const y = toY(m);
     ctx.beginPath(); ctx.moveTo(pL, y); ctx.lineTo(w - pR, y); ctx.stroke();
-    ctx.fillStyle = '#555'; ctx.font = '9px Space Grotesk';
+    ctx.fillStyle = '#444'; ctx.font = '9px Space Grotesk';
     ctx.fillText(m + 'x', 3, y + 4);
   }
-  // fill
   const col = STATE.phase === 'crashed' ? '#fc5a5a' : '#ee86ff';
   const grad = ctx.createLinearGradient(0, pT, 0, h - pB);
-  grad.addColorStop(0, col + '38'); grad.addColorStop(1, col + '04');
+  grad.addColorStop(0, col + '30'); grad.addColorStop(1, col + '03');
   ctx.fillStyle = grad;
   ctx.beginPath();
   ctx.moveTo(toX(0), toY(1));
@@ -536,162 +830,122 @@ function drawCrash() {
   ctx.lineTo(toX(points.length - 1), h - pB);
   ctx.lineTo(toX(0), h - pB);
   ctx.closePath(); ctx.fill();
-  // line
   ctx.strokeStyle = col; ctx.lineWidth = 2.5;
-  ctx.shadowColor = col + '70'; ctx.shadowBlur = 8;
+  ctx.shadowColor = col + '60'; ctx.shadowBlur = 8;
   ctx.beginPath();
   points.forEach((m, i) => i === 0 ? ctx.moveTo(toX(i), toY(m)) : ctx.lineTo(toX(i), toY(m)));
   ctx.stroke(); ctx.shadowBlur = 0;
-  // dot
   if (STATE.phase === 'live') {
     const lx = toX(points.length - 1), ly = toY(points[points.length - 1]);
-    ctx.fillStyle = '#ee86ff'; ctx.shadowColor = '#ee86ff'; ctx.shadowBlur = 14;
-    ctx.beginPath(); ctx.arc(lx, ly, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ee86ff'; ctx.shadowColor = '#ee86ff'; ctx.shadowBlur = 12;
+    ctx.beginPath(); ctx.arc(lx, ly, 4.5, 0, Math.PI * 2); ctx.fill();
     ctx.shadowBlur = 0;
   }
 }
 
-// ── HISTORY BADGES ───────────────────────────────────────────────────────────
+// ── HISTORY ───────────────────────────────────────────────────────────────────
 function renderRoundHistory() {
-  const row = document.getElementById('history-row');
-  row.innerHTML = STATE.roundHistory.slice(-20).reverse()
-    .map(m => `<div class="mult-badge ${multClass(m)}">${m.toFixed(2)}x</div>`).join('');
+  document.getElementById('history-row').innerHTML =
+    STATE.roundHistory.slice(-20).reverse()
+      .map(m => `<div class="mult-badge ${multClass(m)}">${m.toFixed(2)}x</div>`).join('');
 }
 
-// ── BET HISTORY TABLE ────────────────────────────────────────────────────────
+function updateBetCount() {
+  const c = STATE.betHistory.length;
+  document.getElementById('bet-hist-count').textContent = c + ' ' + t('bets');
+}
+
 function renderBetHistory() {
   const body = document.getElementById('bet-history-body');
-  const count = STATE.betHistory.length;
-  document.getElementById('bet-hist-count').textContent = count + ' bet' + (count !== 1 ? 's' : '');
-
-  if (count === 0) {
-    body.innerHTML = '<div class="empty-bets">No bets yet. Place a bet to get started.</div>';
+  updateBetCount();
+  if (!STATE.betHistory.length) {
+    body.innerHTML = `<div class="empty-bets">${t('no_bets')}</div>`;
     return;
   }
-
   body.innerHTML = STATE.betHistory.slice().reverse().map(b => {
     const rowClass = b.result === 'win' ? 'win' : 'loss';
-    const crashedClass = multClass(b.crashedAt);
-
-    let cashedCol, resultCol;
-    if (b.result === 'win') {
-      cashedCol = `<span class="text-green">${b.cashedAt.toFixed(2)}x</span>`;
-      const profit = b.payout - b.bet;
-      resultCol = `<span class="text-green col-right">+${profit.toFixed(2)}</span>`;
-    } else {
-      cashedCol = `<span class="text-dim">—</span>`;
-      resultCol = `<span class="text-red col-right">-${b.bet.toFixed(2)}</span>`;
-    }
-
+    const cashedCol = b.result === 'win'
+      ? `<span class="text-green">${b.cashedAt.toFixed(2)}x</span>`
+      : `<span class="text-dim">—</span>`;
+    const resultCol = b.result === 'win'
+      ? `<span class="text-green">+${(b.payout - b.bet).toFixed(2)}</span>`
+      : `<span class="text-red">-${b.bet.toFixed(2)}</span>`;
     return `<div class="bets-row ${rowClass}">
-      <div><span class="mult-badge ${crashedClass}" style="font-size:10px">${b.crashedAt.toFixed(2)}x</span></div>
-      <span style="color:#a1a1a1">${b.bet.toFixed(2)}</span>
+      <div><span class="mult-badge ${multClass(b.crashedAt)}" style="font-size:10px">${b.crashedAt.toFixed(2)}x</span></div>
+      <span style="color:#666">${b.bet.toFixed(2)}</span>
       <span class="col-center">${cashedCol}</span>
       <span class="col-right">${resultCol}</span>
     </div>`;
   }).join('');
 }
 
-// ── GAME PHASES ───────────────────────────────────────────────────────────────
+// ── PHASES ────────────────────────────────────────────────────────────────────
 function setIdle() {
   STATE.phase = 'idle';
   STATE.multiplier = 1.00;
   STATE.betPlaced = false;
   STATE.cashedOut = false;
+  STATE.pendingCashout = null;
   points = [];
-  clearInterval(STATE.countdown);
-  STATE.countdown = null;
-  removeCountdownUI();
-  drawCrash();
-
+  clearInterval(STATE.countdown); STATE.countdown = null;
+  removeCountdownUI(); drawCrash();
   document.getElementById('multiplier-display').textContent = '1.00x';
   document.getElementById('multiplier-display').className = 'crash-multiplier idle-anim';
-  setStatus('READY', 'waiting-badge');
-
-  // show "New Round" button
+  setStatus(t('status_ready'), 'waiting-badge');
   const btn = document.getElementById('main-btn');
-  btn.textContent = 'New Round';
+  btn.textContent = t('new_round');
   btn.className = 'bet-btn start-round';
   btn.style.cssText = '';
 }
 
 function startRound() {
-  // called when user taps "New Round"
   if (STATE.phase !== 'idle') return;
   STATE.roundNum++;
   STATE.crashPoint = generateCrashPoint();
   STATE.phase = 'waiting';
-  setStatus('WAITING', 'waiting-badge');
+  setStatus(t('status_waiting'), 'waiting-badge');
   document.getElementById('multiplier-display').textContent = '...';
   document.getElementById('multiplier-display').className = 'crash-multiplier idle-anim';
-
-  // while waiting, button becomes Place Bet (if not already bet)
-  if (!STATE.betPlaced) {
-    resetToPlaceBet();
-  }
-
-  // 10-second countdown before going live — updateCountdownUI sets the center display
+  if (!STATE.betPlaced) resetToPlaceBet();
   startCountdown(10, () => startLive());
 }
 
-function startCountdown(seconds, onFinish) {
+function startCountdown(secs, onFinish) {
   clearInterval(STATE.countdown);
-  let remaining = seconds;
-  updateCountdownUI(remaining);
-
+  let rem = secs;
+  updateCountdownUI(rem);
   STATE.countdown = setInterval(() => {
-    remaining--;
-    if (remaining <= 0) {
-      clearInterval(STATE.countdown);
-      STATE.countdown = null;
-      removeCountdownUI();
-      onFinish();
-    } else {
-      updateCountdownUI(remaining);
-    }
+    rem--;
+    if (rem <= 0) { clearInterval(STATE.countdown); STATE.countdown = null; removeCountdownUI(); onFinish(); }
+    else updateCountdownUI(rem);
   }, 1000);
 }
 
 function updateCountdownUI(n) {
-  // Big center countdown in the multiplier display
   const md = document.getElementById('multiplier-display');
-  const urgentColor = n <= 3 ? '#fc5a5a' : '#b37ff9';
+  const col = n <= 3 ? '#fc5a5a' : '#b37ff9';
   md.textContent = n + 's';
-  md.style.background = `linear-gradient(${urgentColor}, ${urgentColor}aa)`;
+  md.style.background = `linear-gradient(${col}, ${col}a0)`;
   md.style.webkitBackgroundClip = 'text';
   md.style.backgroundClip = 'text';
   md.style.color = 'transparent';
-
-  // Small top-right badge
   let el = document.getElementById('countdown-badge');
   if (!el) {
     el = document.createElement('div');
     el.id = 'countdown-badge';
-    el.style.cssText = `
-      position: absolute; top: 10px; right: 10px;
-      background: #1c1c1f; border: 1px solid #493367;
-      border-radius: 8px; padding: 4px 10px;
-      font-size: 12px; font-weight: 700; color: #b37ff9;
-      font-family: 'Space Grotesk', sans-serif;
-      display: flex; align-items: center; gap: 5px;
-      z-index: 10;
-    `;
+    el.style.cssText = 'position:absolute;top:10px;right:10px;background:#161618;border:1px solid #3d2f55;border-radius:7px;padding:3px 9px;font-size:11px;font-weight:700;color:#b37ff9;font-family:"Space Grotesk",sans-serif;display:flex;align-items:center;gap:4px;z-index:10;';
     document.querySelector('.crash-graph').appendChild(el);
   }
-  el.style.color = urgentColor;
-  el.style.borderColor = n <= 3 ? '#fc5a5a60' : '#493367';
-  el.innerHTML = `<span style="color:#767676;font-weight:500">Starting in</span> ${n}s`;
+  el.style.color = col;
+  el.style.borderColor = n <= 3 ? '#fc5a5a40' : '#3d2f55';
+  el.innerHTML = `<span style="color:#444;font-weight:500">${t('starting_in')}</span> ${n}s`;
 }
 
 function removeCountdownUI() {
   const el = document.getElementById('countdown-badge');
   if (el) el.remove();
-  // Reset multiplier display style
   const md = document.getElementById('multiplier-display');
-  md.style.background = '';
-  md.style.webkitBackgroundClip = '';
-  md.style.backgroundClip = '';
-  md.style.color = '';
+  md.style.background = md.style.webkitBackgroundClip = md.style.backgroundClip = md.style.color = '';
 }
 
 function startLive() {
@@ -700,33 +954,26 @@ function startLive() {
   STATE.multiplier = 1.00;
   points = [1.00];
   const startTime = Date.now();
-
-  setStatus('LIVE', 'live');
+  setStatus(t('status_live'), 'live');
   document.getElementById('multiplier-display').className = 'crash-multiplier';
-
-  if (STATE.betPlaced) {
-    showCashoutBtn();
-  }
-
+  if (STATE.betPlaced) showCashoutBtn();
   function frame() {
     if (STATE.phase !== 'live') return;
     const elapsed = (Date.now() - startTime) / 1000;
-    STATE.multiplier = parseFloat(Math.pow(Math.E, 0.15 * elapsed).toFixed(2));
-    STATE.multiplier = Math.max(1.00, Math.min(STATE.multiplier, 9999));
+    STATE.multiplier = parseFloat(Math.min(Math.pow(Math.E, 0.15 * elapsed), 9999).toFixed(2));
+    STATE.multiplier = Math.max(1.00, STATE.multiplier);
     points.push(STATE.multiplier);
     if (points.length > 300) points.shift();
-
     document.getElementById('multiplier-display').textContent = STATE.multiplier.toFixed(2) + 'x';
-
     if (STATE.betPlaced && !STATE.cashedOut) {
       const cashoutAt = parseFloat(document.getElementById('cashout-at').value);
-      if (STATE.multiplier >= cashoutAt) {
+      if (cashoutAt >= 1.01 && STATE.multiplier >= cashoutAt) {
         autoCashout();
       } else {
-        document.getElementById('main-btn').textContent = 'Cash Out ' + (STATE.betAmount * STATE.multiplier).toFixed(2);
+        document.getElementById('main-btn').textContent =
+          t('cash_out') + ' ' + (STATE.betAmount * STATE.multiplier).toFixed(2);
       }
     }
-
     drawCrash();
     if (STATE.multiplier >= STATE.crashPoint) { doCrash(); return; }
     STATE.frame = requestAnimationFrame(frame);
@@ -737,30 +984,25 @@ function startLive() {
 function doCrash() {
   STATE.phase = 'crashed';
   cancelAnimationFrame(STATE.frame);
-
   STATE.roundHistory.push(STATE.crashPoint);
   if (STATE.roundHistory.length > 50) STATE.roundHistory.shift();
-
   document.getElementById('multiplier-display').textContent = STATE.crashPoint.toFixed(2) + 'x';
   document.getElementById('multiplier-display').className = 'crash-multiplier crashed';
-  setStatus('CRASHED', 'crashed-badge');
-
-  // record bet if one was placed and not cashed out
+  setStatus(t('status_crashed'), 'crashed-badge');
+  // Loss record
   if (STATE.betPlaced && !STATE.cashedOut) {
-    STATE.betHistory.push({
-      round: STATE.roundNum,
-      bet: STATE.betAmount,
-      crashedAt: STATE.crashPoint,
-      cashedAt: null,
-      payout: 0,
-      result: 'loss',
-    });
+    STATE.betHistory.push({ round: STATE.roundNum, bet: STATE.betAmount, crashedAt: STATE.crashPoint, cashedAt: null, payout: 0, result: 'loss' });
     renderBetHistory();
   }
-
+  // Commit pending cashout — now we know crashedAt
+  if (STATE.pendingCashout) {
+    const pc = STATE.pendingCashout;
+    STATE.betHistory.push({ round: pc.round, bet: pc.bet, crashedAt: STATE.crashPoint, cashedAt: pc.cashedAt, payout: pc.payout, result: 'win' });
+    STATE.pendingCashout = null;
+    renderBetHistory();
+  }
   renderRoundHistory();
   drawCrash();
-
   setTimeout(setIdle, 2000);
 }
 
@@ -771,116 +1013,78 @@ function autoCashout() {
 
 function doCashout() {
   STATE.cashedOut = true;
-  const payout = parseFloat((STATE.betAmount * STATE.multiplier).toFixed(2));
+  const cashedAt = STATE.multiplier;
+  const payout = parseFloat((STATE.betAmount * cashedAt).toFixed(2));
   STATE.balance = parseFloat((STATE.balance + payout).toFixed(2));
   updateBalance();
-
-  // record win
-  STATE.betHistory.push({
-    round: STATE.roundNum,
-    bet: STATE.betAmount,
-    crashedAt: STATE.crashPoint,
-    cashedAt: STATE.multiplier,
-    payout,
-    result: 'win',
-  });
-  renderBetHistory();
-
+  showCashoutAnimation(payout);
+  // Store as pending — committed once round ends and crashedAt is known
+  STATE.pendingCashout = { round: STATE.roundNum, bet: STATE.betAmount, cashedAt, payout };
   resetToPlaceBet();
 }
 
-// ── MAIN ACTION BUTTON ────────────────────────────────────────────────────────
-// One button, four states: "New Round" / "Place Bet" / "Cancel Bet" / "Cash Out X"
+// ── ACTION BUTTON ─────────────────────────────────────────────────────────────
 function mainAction() {
-  if (STATE.phase === 'idle') {
-    startRound();
-    return;
-  }
-  if ((STATE.phase === 'waiting' || STATE.phase === 'idle') && !STATE.betPlaced) {
-    placeBet();
-    return;
-  }
-  if (STATE.phase === 'waiting' && STATE.betPlaced) {
-    cancelBet();
-    return;
-  }
-  if (STATE.phase === 'live' && !STATE.betPlaced) {
-    placeBet();
-    return;
-  }
-  if (STATE.phase === 'live' && STATE.betPlaced && !STATE.cashedOut) {
-    doCashout();
-    return;
-  }
+  if (STATE.phase === 'idle') { startRound(); return; }
+  if ((STATE.phase === 'waiting' || STATE.phase === 'idle') && !STATE.betPlaced) { placeBet(); return; }
+  if (STATE.phase === 'waiting' && STATE.betPlaced) { cancelBet(); return; }
+  if (STATE.phase === 'live' && !STATE.betPlaced) { placeBet(); return; }
+  if (STATE.phase === 'live' && STATE.betPlaced && !STATE.cashedOut) { doCashout(); return; }
 }
 
 function placeBet() {
   STATE.betAmount = parseFloat(document.getElementById('bet-amount').value) || 10;
-  if (STATE.betAmount > STATE.balance) { alert('Insufficient balance!'); return; }
+  if (STATE.betAmount > STATE.balance) { alert(t('insufficient')); return; }
   STATE.betPlaced = true;
   STATE.balance = parseFloat((STATE.balance - STATE.betAmount).toFixed(2));
   updateBalance();
-
   if (STATE.phase === 'live') {
     showCashoutBtn();
   } else if (STATE.phase === 'idle') {
-    // Start a new round automatically with countdown
-    STATE.roundNum++;
-    STATE.crashPoint = generateCrashPoint();
-    STATE.phase = 'waiting';
-    setStatus('WAITING', 'waiting-badge');
+    STATE.roundNum++; STATE.crashPoint = generateCrashPoint(); STATE.phase = 'waiting';
+    setStatus(t('status_waiting'), 'waiting-badge');
     document.getElementById('multiplier-display').textContent = '...';
     document.getElementById('multiplier-display').className = 'crash-multiplier idle-anim';
     const btn = document.getElementById('main-btn');
-    btn.textContent = 'Cancel Bet';
-    btn.className = 'bet-btn cancel-queued';
-    btn.style.cssText = '';
+    btn.textContent = t('cancel_bet'); btn.className = 'bet-btn cancel-queued'; btn.style.cssText = '';
     startCountdown(10, () => startLive());
   } else {
-    // waiting phase
     const btn = document.getElementById('main-btn');
-    btn.textContent = 'Cancel Bet';
-    btn.className = 'bet-btn cancel-queued';
-    btn.style.cssText = '';
+    btn.textContent = t('cancel_bet'); btn.className = 'bet-btn cancel-queued'; btn.style.cssText = '';
   }
 }
 
 function cancelBet() {
   STATE.betPlaced = false;
   STATE.balance = parseFloat((STATE.balance + STATE.betAmount).toFixed(2));
-  updateBalance();
-  resetToPlaceBet();
+  updateBalance(); resetToPlaceBet();
 }
 
 function showCashoutBtn() {
   const btn = document.getElementById('main-btn');
-  btn.textContent = 'Cash Out ' + (STATE.betAmount * STATE.multiplier).toFixed(2);
-  btn.className = 'bet-btn cashout';
-  btn.style.cssText = '';
+  btn.textContent = t('cash_out') + ' ' + (STATE.betAmount * STATE.multiplier).toFixed(2);
+  btn.className = 'bet-btn cashout'; btn.style.cssText = '';
 }
 
 function resetToPlaceBet() {
   const btn = document.getElementById('main-btn');
-  btn.textContent = 'Place Bet';
-  btn.className = 'bet-btn primary';
-  btn.style.cssText = '';
+  btn.textContent = t('place_bet'); btn.className = 'bet-btn primary'; btn.style.cssText = '';
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function halveBet() {
   const inp = document.getElementById('bet-amount');
   inp.value = Math.max(0.01, parseFloat(inp.value) / 2).toFixed(2);
-  updateProjected();
 }
 function doubleBet() {
   const inp = document.getElementById('bet-amount');
   inp.value = (parseFloat(inp.value) * 2).toFixed(2);
-  updateProjected();
 }
-function updateProjected() {
-  const bet = parseFloat(document.getElementById('bet-amount').value) || 0;
-  const co  = parseFloat(document.getElementById('cashout-at').value) || 2;
-  document.getElementById('projected-payout').textContent = '$' + (bet * co).toFixed(2);
+function maxBet() {
+  document.getElementById('bet-amount').value = STATE.balance.toFixed(2);
+}
+function setWithdrawPct(pct) {
+  document.getElementById('withdraw-input').value = (STATE.balance * pct).toFixed(2);
 }
 function updateBalance() {
   document.getElementById('balance').textContent =
@@ -888,92 +1092,152 @@ function updateBalance() {
 }
 function setStatus(text, cls) {
   const el = document.getElementById('crash-status');
-  el.textContent = text;
-  el.className = 'crash-status ' + cls;
+  el.textContent = text; el.className = 'crash-status ' + cls;
 }
 
-// ── BALANCE MODAL ─────────────────────────────────────────────────────────────
-function buildOddsRows() {
-  const container = document.getElementById('odds-rows');
-  container.innerHTML = '';
-  for (let i = 0; i < 3; i++) {
-    const val = STATE.presetOdds[i];
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;gap:8px;';
-    row.innerHTML = `
-      <span style="font-size:11px;color:#a1a1a1;min-width:52px;">Round +${i+1}</span>
-      <input
-        id="odds-input-${i}"
-        type="number" min="1.01" step="0.1"
-        inputmode="decimal"
-        placeholder="Random"
-        value="${val !== null ? val : ''}"
-        style="flex:1;background:#0d0d0d;border:1px solid #3d3d45;border-radius:8px;
-               padding:8px 10px;color:#fff;font-size:14px;font-weight:600;
-               font-family:'Space Grotesk',sans-serif;outline:none;text-align:center;
-               -webkit-appearance:none;"
-        onfocus="this.style.borderColor='#6f5fcc'"
-        onblur="this.style.borderColor='#3d3d45'"
-      />
-      <span style="font-size:12px;color:#b37ff9;font-weight:600;">×</span>
-    `;
-    container.appendChild(row);
-  }
-}
-
-function refreshOddsPreview() {
-  // rebuild row values if modal is open
-  if (document.getElementById('balance-modal').classList.contains('open')) {
-    buildOddsRows();
-  }
-  renderPresetOddsBar();
-}
+// ── WALLET ────────────────────────────────────────────────────────────────────
+let referralApplied = false;
 
 function openBalanceModal() {
-  document.getElementById('balance-input').value = STATE.balance.toFixed(2);
-  buildOddsRows();
+  document.getElementById('modal-balance-display').textContent = '$' + STATE.balance.toFixed(2);
+  document.getElementById('withdraw-avail').textContent = '$' + STATE.balance.toFixed(2);
+  if (referralApplied) buildOddsRows();
+  showWalletMain();
   document.getElementById('balance-modal').classList.add('open');
-  setTimeout(() => document.getElementById('balance-input').focus(), 100);
 }
 function closeBalanceModal(e) {
   if (e && e.target !== document.getElementById('balance-modal')) return;
   document.getElementById('balance-modal').classList.remove('open');
 }
-function confirmBalance() {
-  const val = parseFloat(document.getElementById('balance-input').value);
-  if (!isNaN(val) && val >= 0) {
-    STATE.balance = parseFloat(val.toFixed(2));
-    updateBalance();
-  }
-  // Save preset odds
-  for (let i = 0; i < 3; i++) {
-    const inp = document.getElementById('odds-input-' + i);
-    if (inp) {
-      const v = parseFloat(inp.value);
-      STATE.presetOdds[i] = (!isNaN(v) && v >= 1.01) ? parseFloat(v.toFixed(2)) : null;
-    }
-  }
-  document.getElementById('balance-modal').classList.remove('open');
-  renderPresetOddsBar();
+function showWalletMain() {
+  document.getElementById('wallet-main').style.display = 'block';
+  document.getElementById('wallet-deposit').style.display = 'none';
+  document.getElementById('wallet-withdraw').style.display = 'none';
 }
-document.getElementById('balance-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') confirmBalance();
-  if (e.key === 'Escape') document.getElementById('balance-modal').classList.remove('open');
-});
+function showWalletSub(sub) {
+  document.getElementById('wallet-main').style.display = 'none';
+  document.getElementById('wallet-deposit').style.display = sub === 'deposit' ? 'block' : 'none';
+  document.getElementById('wallet-withdraw').style.display = sub === 'withdraw' ? 'block' : 'none';
+  if (sub === 'deposit') setTimeout(() => document.getElementById('deposit-input').focus(), 80);
+  if (sub === 'withdraw') {
+    document.getElementById('withdraw-avail').textContent = '$' + STATE.balance.toFixed(2);
+    setTimeout(() => document.getElementById('withdraw-input').focus(), 80);
+  }
+}
+function setDepositAmt(n) { document.getElementById('deposit-input').value = n.toFixed(2); }
+function confirmDeposit() {
+  const val = parseFloat(document.getElementById('deposit-input').value);
+  if (!isNaN(val) && val > 0) {
+    STATE.balance = parseFloat((STATE.balance + val).toFixed(2));
+    updateBalance();
+    document.getElementById('deposit-input').value = '';
+    showWalletMain();
+    document.getElementById('modal-balance-display').textContent = '$' + STATE.balance.toFixed(2);
+    document.getElementById('withdraw-avail').textContent = '$' + STATE.balance.toFixed(2);
+  }
+}
+function confirmWithdraw() {
+  const val = parseFloat(document.getElementById('withdraw-input').value);
+  if (!isNaN(val) && val > 0 && val <= STATE.balance) {
+    STATE.balance = parseFloat((STATE.balance - val).toFixed(2));
+    updateBalance();
+    document.getElementById('withdraw-input').value = '';
+    showWalletMain();
+    document.getElementById('modal-balance-display').textContent = '$' + STATE.balance.toFixed(2);
+    document.getElementById('withdraw-avail').textContent = '$' + STATE.balance.toFixed(2);
+  } else {
+    const inp = document.getElementById('withdraw-input');
+    inp.style.borderColor = '#fc5a5a';
+    setTimeout(() => inp.style.borderColor = '#2a2a30', 900);
+  }
+}
+function handleReferralInput(el) {
+  el.value = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  document.getElementById('referral-msg').textContent = '';
+}
+function applyReferral() {
+  const code = document.getElementById('referral-input').value.trim().toUpperCase();
+  const msg = document.getElementById('referral-msg');
+  if (code === 'LARP67') {
+    referralApplied = true;
+    msg.textContent = t('code_applied'); msg.style.color = '#02df98';
+    document.getElementById('odds-section').style.display = 'block';
+    buildOddsRows();
+  } else if (!code) {
+    msg.textContent = t('enter_a_code'); msg.style.color = '#fc5a5a';
+  } else {
+    msg.textContent = t('invalid_code'); msg.style.color = '#fc5a5a';
+    document.getElementById('odds-section').style.display = 'none';
+  }
+}
+function buildOddsRows() {
+  const c = document.getElementById('odds-rows');
+  c.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const val = STATE.presetOdds[i];
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;';
+    row.innerHTML = `<span style="font-size:11px;color:#666;min-width:52px;">${t('round_label')}${i+1}</span>
+      <input id="odds-input-${i}" type="number" min="1.01" step="0.1" inputmode="decimal"
+        placeholder="Random" value="${val !== null ? val : ''}"
+        style="flex:1;background:#0d0d0d;border:1px solid #2a2a30;border-radius:7px;padding:7px 10px;
+               color:#fff;font-size:13px;font-weight:600;font-family:'Space Grotesk',sans-serif;
+               outline:none;text-align:center;-webkit-appearance:none;transition:border-color 0.15s;"
+        onfocus="this.style.borderColor='#6f5fcc'" onblur="this.style.borderColor='#2a2a30'"
+        onchange="saveOddsInput(${i},this.value)" />
+      <span style="font-size:12px;color:#b37ff9;font-weight:700;">×</span>`;
+    c.appendChild(row);
+  }
+}
+function saveOddsInput(i, val) {
+  const v = parseFloat(val);
+  STATE.presetOdds[i] = (!isNaN(v) && v >= 1.01) ? parseFloat(v.toFixed(2)) : null;
+}
+function refreshOddsPreview() {
+  if (referralApplied && document.getElementById('balance-modal').classList.contains('open')) buildOddsRows();
+}
 
-function renderPresetOddsBar() { /* removed from UI, presets still work internally */ }
-
-function switchGame(game) {
+// ── COMING SOON ───────────────────────────────────────────────────────────────
+function closeComingSoon() {
+  const pg = document.getElementById('coming-soon-page');
+  pg.style.opacity = '0'; pg.style.transition = 'opacity 0.2s ease';
+  setTimeout(() => { pg.style.display = 'none'; pg.style.opacity = ''; }, 210);
   document.querySelectorAll('.game-tab').forEach(b => b.classList.remove('active'));
-  const idx = ['crash','coinflip','cases','blackjack','jackpot'].indexOf(game);
+  document.querySelectorAll('.game-tab')[0].classList.add('active');
+}
+function switchGame(game) {
+  if (game === 'coinflip' || game === 'jackpot') {
+    const pg = document.getElementById('coming-soon-page');
+    const nameMap = { coinflip: { en: 'Coinflip', ar: 'قلب العملة' }, jackpot: { en: 'Jackpot', ar: 'جاكبوت' } };
+    document.getElementById('coming-soon-game-name').textContent = nameMap[game][currentLang];
+    pg.style.display = 'flex'; pg.style.opacity = '0';
+    requestAnimationFrame(() => { pg.style.transition = 'opacity 0.18s ease'; pg.style.opacity = '1'; });
+    return;
+  }
+  document.querySelectorAll('.game-tab').forEach(b => b.classList.remove('active'));
+  const idx = ['crash','coinflip','jackpot'].indexOf(game);
   if (idx >= 0) document.querySelectorAll('.game-tab')[idx].classList.add('active');
 }
 
-document.getElementById('bet-amount').addEventListener('input', updateProjected);
-document.getElementById('cashout-at').addEventListener('input', updateProjected);
+// ── CASHOUT ANIMATION ─────────────────────────────────────────────────────────
+function showCashoutAnimation(amount) {
+  const overlay = document.getElementById('cashout-anim');
+  const inner = document.getElementById('cashout-anim-inner');
+  document.getElementById('cashout-anim-amount').textContent = '$' + amount.toFixed(2);
+  overlay.style.display = 'flex';
+  requestAnimationFrame(() => { inner.style.transform = 'scale(1)'; inner.style.opacity = '1'; });
+  setTimeout(() => {
+    inner.style.transition = 'transform 0.35s ease, opacity 0.35s ease';
+    inner.style.transform = 'scale(1.06) translateY(-10px)'; inner.style.opacity = '0';
+    setTimeout(() => {
+      overlay.style.display = 'none';
+      inner.style.transition = 'transform 0.22s cubic-bezier(.34,1.56,.64,1),opacity 0.18s ease';
+      inner.style.transform = 'scale(0.7)'; inner.style.opacity = '0';
+    }, 360);
+  }, 1100);
+}
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
-updateProjected();
 setIdle();
 </script>
 </body>
